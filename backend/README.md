@@ -1,201 +1,114 @@
 # Video Processing Backend
 
-A FastAPI-based backend for video processing with trimming, overlays, and transcoding capabilities.
+FastAPI backend for video processing. Upload videos, trim, overlay image/video, watermark, transcode. Jobs run in the background and persist to Postgres. Everything is containerized.
 
-## Features
+## What it does
 
-- **Video Upload**: Upload video files with automatic metadata extraction
-- **Video Trimming**: Trim videos to specified time ranges
-- **Overlays**: Add text, image, and video overlays with precise positioning
-- **Watermarks**: Apply semi-transparent watermarks
-- **Transcoding**: Generate multiple quality variants (1080p, 720p, 480p)
-- **Background Processing**: Async job processing with progress tracking
-- **RESTful API**: Complete OpenAPI documentation
+- Uploads videos and stores metadata
+- Trims by time range
+- Overlays: text, image, video (positioning with expressions like `(W-w)/2`)
+- Watermark endpoint (image, full duration)
+- Transcodes to 1080p/720p/480p
+- Background jobs with progress and error reporting
+- OpenAPI docs
 
-## Quick Start
+## Paths and storage
 
-### Prerequisites
+- Uploads: `backend/data/uploads`
+- Variants (trim/overlay/watermark): `backend/data/variants`
+- Transcodes: `backend/data/processed`
+- Assets (read-only in container): host `backend/assets` → container `/app/assets`
 
-- Docker and Docker Compose
-- `uv` package manager (for local development)
+Case-sensitive paths. Use absolute container paths like `/app/assets/overlay/Overlay.png`.
 
-### Running with Docker
+## Run with Docker
 
-1. **Clone and setup**:
-   ```bash
-   cd backend
-   cp env.example .env
-   ```
-
-2. **Start the services**:
-   ```bash
-   docker compose up --build
-   ```
-
-3. **Access the API**:
-   - API Documentation: http://localhost:8000/docs
-   - Health Check: http://localhost:8000/
-
-### Local Development
-
-1. **Install dependencies**:
-   ```bash
-   uv sync
-   ```
-
-2. **Start PostgreSQL** (using Docker):
-   ```bash
-   docker run -d --name postgres \
-     -e POSTGRES_DB=videos \
-     -e POSTGRES_USER=videos \
-     -e POSTGRES_PASSWORD=videos \
-     -p 5432:5432 \
-     postgres:16
-   ```
-
-3. **Run migrations**:
-   ```bash
-   uv run alembic upgrade head
-   ```
-
-4. **Start the API**:
-   ```bash
-   uv run uvicorn app.main:app --reload
-   ```
-
-## API Usage
-
-### Upload Video
 ```bash
-curl -X POST "http://localhost:8000/videos/upload" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@video.mp4"
+cd backend
+cp env.example .env
+docker compose up --build
 ```
 
-### Trim Video
+Services
+- API: http://localhost:8000 (docs at `/docs`)
+- Postgres: localhost:5432
+- Adminer (DB UI): http://localhost:8080 (System: PostgreSQL, Server: db, User/Pass: videos, DB: videos)
+
+## Local dev (optional)
+
 ```bash
-curl -X POST "http://localhost:8000/trim" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "video_id": "uuid-here",
-    "start": "00:00:05",
-    "end": "00:00:15"
-  }'
+uv sync
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload
 ```
 
-### Apply Overlays
+## API quick refs
+
+Upload
 ```bash
-curl -X POST "http://localhost:8000/overlays" \
-  -H "Content-Type: application/json" \
+curl -X POST http://localhost:8000/videos/upload \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@video.mp4'
+```
+
+Trim
+```bash
+curl -X POST http://localhost:8000/trim \
+  -H 'Content-Type: application/json' \
+  -d '{"video_id":"uuid","start":"00:00:05","end":"00:00:15"}'
+```
+
+Overlay (image/video)
+```bash
+curl -X POST http://localhost:8000/overlays \
+  -H 'Content-Type: application/json' \
   -d '{
-    "video_id": "uuid-here",
+    "video_id": "uuid",
     "overlays": [
-      {
-        "type": "text",
-        "text": "Hello World",
-        "x": 20,
-        "y": 20,
-        "start": 0,
-        "end": 5
-      }
+      {"type":"image","image_path":"/app/assets/overlay/Overlay.png","x":"(W-w)/2","y":"20","start":0,"end":null,"opacity":0.85},
+      {"type":"video","video_path":"/app/assets/overlay/B-roll-1.mp4","x":"(W-w)/2","y":"H-h-20","start":0,"end":4}
     ],
-    "watermark": {
-      "image_path": "/app/assets/logo.png",
-      "opacity": 0.5
-    }
+    "watermark": null
   }'
 ```
 
-### Check Job Status
+Watermark (full duration)
 ```bash
-curl "http://localhost:8000/jobs/status/{job_id}"
+curl -X POST http://localhost:8000/overlays/watermark \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "video_id": "uuid",
+    "watermark": {"image_path":"/app/assets/overlay/Overlay.png","x":"W-w-20","y":"H-h-20","opacity":0.35}
+  }'
 ```
 
-### Download Result
+Job status
 ```bash
-curl "http://localhost:8000/jobs/result/{job_id}" -o result.mp4
+curl http://localhost:8000/jobs/status/{job_id}
 ```
 
-## Project Structure
+## Notes that matter
 
+- Assets must be inside `/app/assets` in the container; use correct case
+- Video overlay: you can omit `scale` and ship pre-sized overlay assets
+- Expressions: `W/H` are main video dims, `w/h` are overlay dims
+- DB is the source of truth for job status (`PENDING/STARTED/SUCCESS/FAILURE`)
+
+## Structure
 ```
 backend/
-├── app/
-│   ├── api/                 # API routes
-│   ├── core/               # Configuration and logging
-│   ├── db/                 # Database models and CRUD
-│   ├── services/           # Business logic services
-│   ├── utils/              # Utility functions
-│   └── lifecycle/         # App startup/shutdown
-├── alembic/               # Database migrations
-├── docker/               # Docker configuration
-├── data/                 # Media storage (mounted volume)
-├── fonts/                # Font files (mounted volume)
-├── assets/               # Static assets (mounted volume)
-└── docker-compose.yml    # Docker services
+  app/            # API, services, db, core
+  alembic/        # migrations
+  assets/         # mounted to /app/assets (ro)
+  data/           # uploads, variants, processed
+  docker/         # scripts
+  docker-compose.yml
 ```
 
-## Configuration
-
-Environment variables (see `env.example`):
-
-- `APP_ENV`: Environment (dev/prod)
-- `APP_HOST`: API host (default: 0.0.0.0)
-- `APP_PORT`: API port (default: 8000)
-- `DB_*`: Database connection settings
-- `MEDIA_ROOT`: Media storage directory
-- `FONT_DIR`: Font directory
-- `FFMPEG_BIN`: FFmpeg binary path
-- `FFPROBE_BIN`: FFprobe binary path
+## Config
+- See `env.example`. Defaults work for local Docker.
 
 ## Troubleshooting
-
-### Large Files
-- The API handles large files through streaming
-- Check Docker logs for FFmpeg errors: `docker logs video-editor-api-1`
-
-### Jobs Stuck
-- Check job status: `GET /jobs/status/{job_id}`
-- Review logs for FFmpeg stderr output
-- Jobs marked as `STARTED` will complete or fail
-
-### Path Issues
-- Overlay assets must be in `/app/assets` or `/data`
-- Font files should be in `/fonts` directory
-- All paths are validated for security
-
-### Font Support
-- Noto fonts are included for international text
-- Custom fonts can be added to `/fonts` directory
-- Text overlays support Indic text shaping
-
-## Development
-
-### Adding New Features
-1. Create database models in `app/db/models.py`
-2. Add CRUD operations in `app/db/crud.py`
-3. Create API schemas in `app/db/schemas.py`
-4. Implement business logic in `app/services/`
-5. Add API routes in `app/api/`
-
-### Database Migrations
-```bash
-# Create new migration
-uv run alembic revision --autogenerate -m "Description"
-
-# Apply migrations
-uv run alembic upgrade head
-```
-
-### Testing
-```bash
-# Run tests
-uv run pytest
-
-# Export OpenAPI spec
-./openapi-export.sh
-```
-
-## License
-
-MIT License
+- Path errors: check the exact container path and filename case
+- FFmpeg failures: inspect `docker compose logs api` around the job time
+- Adminer cannot connect: ensure Server=`db`, creds from `.env`

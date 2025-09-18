@@ -1,4 +1,4 @@
-# Video Processing Backend
+# Edit API
 
 FastAPI backend for video processing. Upload videos, trim, overlay image/video, watermark, transcode. Jobs run in the background and persist to Postgres. Everything is containerized.
 
@@ -19,7 +19,7 @@ FastAPI backend for video processing. Upload videos, trim, overlay image/video, 
 - Transcodes: `backend/data/processed`
 - Assets (read-only in container): host `backend/assets` → container `/app/assets`
 
-Case-sensitive paths. Use absolute container paths like `/app/assets/overlay/Overlay.png`.
+Case-sensitive paths. Use absolute container paths like `/app/assets/image.png`.
 
 ## Run with Docker
 
@@ -65,8 +65,8 @@ curl -X POST http://localhost:8000/overlays \
   -d '{
     "video_id": "uuid",
     "overlays": [
-      {"type":"image","image_path":"/app/assets/overlay/Overlay.png","x":"(W-w)/2","y":"20","start":0,"end":null,"opacity":0.85},
-      {"type":"video","video_path":"/app/assets/overlay/B-roll-1.mp4","x":"(W-w)/2","y":"H-h-20","start":0,"end":4}
+      {"type":"image","image_path":"/app/assets/image.png","x":"(W-w)/2","y":"20","start":0,"end":null,"opacity":0.85},
+      {"type":"video","video_path":"/app/assets/video.mov","x":"(W-w)/2","y":"H-h-20","start":0,"end":4}
     ],
     "watermark": null
   }'
@@ -78,7 +78,7 @@ curl -X POST http://localhost:8000/overlays/watermark \
   -H 'Content-Type: application/json' \
   -d '{
     "video_id": "uuid",
-    "watermark": {"image_path":"/app/assets/overlay/Overlay.png","x":"W-w-20","y":"H-h-20","opacity":0.35}
+    "watermark": {"image_path":"/app/assets/image.png","x":"W-w-20","y":"H-h-20","opacity":0.35}
   }'
 ```
 

@@ -1,0 +1,68 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+.env
+.env.*
+.python-version
+.coverage
+.pytest_cache/
+.mypy_cache/
+.pyright/
+
+# Editors/IDE
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+build/
+dist/
+*.tmp
+*.temp
+
+# Node leftovers (if any)
+node_modules/
+
+# UV/virtual envs
+backend/.venv/
+
+# Local data/media (keep out of git)
+backend/data/uploads/
+backend/data/variants/
+backend/data/processed/
+backend/data/**/*.mp4
+backend/data/**/*.mov
+backend/data/**/*.m4v
+backend/data/**/*.webm
+backend/data/**/*.wav
+backend/data/**/*.aac
+
+# Database dumps
+*.sql
+*.dump
+
+# Docker
+*.pid
+
+# Secrets (examples are okay)
+backend/.env
+!.env.example
+backend/env.example
+
+# Cache/temp
+.tmp/
+.temp/
+.cache/

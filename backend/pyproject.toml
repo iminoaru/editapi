@@ -1,5 +1,5 @@
 [project]
-name = "EditorsAPI"
+name = "EditAPI"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [

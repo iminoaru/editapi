@@ -12,14 +12,15 @@ WORKDIR /app
 
 COPY pyproject.toml /app/pyproject.toml
 COPY uv.lock /app/uv.lock
-RUN uv sync --frozen
+
+RUN uv pip install --system fastapi uvicorn[standard] python-multipart sqlalchemy alembic psycopg2-binary pydantic pydantic-settings httpx python-jose[cryptography] passlib[bcrypt]
 
 COPY app /app/app
 COPY alembic /app/alembic
 COPY alembic.ini /app/alembic.ini
 COPY docker /app/docker
-COPY README.md /app/README.md
 COPY openapi-export.sh /app/openapi-export.sh
+
 
 RUN mkdir -p /data
 EXPOSE 8000

@@ -16,56 +16,16 @@
         <div class="hero-head">
           <h1>Edit API</h1>
         </div>
-        <p class="tag">
-          Minimal <span class="ink">video processing backend</span> for uploads, trims,
-          overlays, watermarks and transcodes.
-          <br />
-          Built as a compact API layer for editor tools and media workflows.
-        </p>
         <div class="cta">
-          <a class="btn" href="#tech">Tech</a>
-          <a class="btn ghost" href="#api">API structure</a>
+          <a class="btn" href="api/">API structure</a>
         </div>
       </div>
     </header>
 
-    <main class="container">
-      <section class="text-grid" id="tech" aria-label="Technology used">
-        <div class="text-block">
-          <h2>Tech used</h2>
-          <p><span class="ink">FastAPI</span> for the HTTP API and OpenAPI docs.</p>
-          <p><span class="ink">FFmpeg</span> for trim, overlay, watermark and transcode work.</p>
-          <p><span class="ink">Postgres</span> for videos, variants and job state.</p>
-          <p><span class="ink">SQLAlchemy</span> for database access.</p>
-          <p><span class="ink">Alembic</span> for schema migrations.</p>
-          <p><span class="ink">Docker</span> for the API, database and local services.</p>
-        </div>
-
-        <div class="text-block" id="api">
-          <h2>API structure</h2>
-          <p><span class="ink">/videos</span> uploads files and stores video metadata.</p>
-          <p><span class="ink">/trim</span> creates a clipped variant from a time range.</p>
-          <p><span class="ink">/overlays</span> applies text, image, video and watermark overlays.</p>
-          <p><span class="ink">/variants</span> lists processed outputs for a source video.</p>
-          <p><span class="ink">/jobs</span> exposes job status and processing results.</p>
-        </div>
-      </section>
-
-      <section class="features">
-        <h2>How it works</h2>
-        <p>
-          A client uploads a video, requests an operation, then polls a job until the generated
-          variant is ready.
-        </p>
-        <p>
-          Stored job states include pending, started, success and failure. Output files are grouped
-          as uploads, variants and processed transcodes.
-        </p>
-      </section>
-    </main>
+    <main class="container"></main>
 
     <footer class="container foot">
-      <small>FastAPI / FFmpeg / Postgres / Docker</small>
+      <small>made by <a class="ink" href="https://github.com/iminoaru">Sarthak</a></small>
     </footer>
   </body>
 </html>

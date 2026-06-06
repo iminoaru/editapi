@@ -14,98 +14,52 @@
     <header class="container">
       <div class="hero">
         <div class="hero-head">
-          <div class="logo squircle" aria-hidden="true">
-            <span>API</span>
-          </div>
           <h1>Edit API</h1>
         </div>
         <p class="tag">
-          Minimal <span class="ink">video processing backend</span> for uploads, trims, overlays,
-          watermarks and transcodes. Built with <span class="ink">FastAPI</span>, FFmpeg,
-          Postgres and background jobs that report progress clearly.
+          Minimal <span class="ink">video processing backend</span> for uploads, trims,
+          overlays, watermarks and transcodes.
           <br />
-          Designed as a compact service layer for editor tools and media workflows.
+          Built as a compact API layer for editor tools and media workflows.
         </p>
         <div class="cta">
-          <a class="btn" href="#pipeline">Pipeline</a>
-          <a class="btn ghost" href="#capabilities">Capabilities</a>
+          <a class="btn" href="#tech">Tech</a>
+          <a class="btn ghost" href="#api">API structure</a>
         </div>
       </div>
     </header>
 
     <main class="container">
-      <section class="shots" id="pipeline" aria-label="Project overview">
-        <figure>
-          <div class="showcase squircle">
-            <div class="browser-bar">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="video-card">
-              <div class="frame">
-                <div class="play"></div>
-                <div class="watermark">wm</div>
-                <div class="caption-line"></div>
-              </div>
-              <div class="timeline">
-                <span class="clip"></span>
-                <span class="clip muted"></span>
-                <span class="clip short"></span>
-              </div>
-            </div>
-            <div class="flow">
-              <span>upload</span>
-              <span>trim</span>
-              <span>overlay</span>
-              <span>export</span>
-            </div>
-          </div>
-          <figcaption>media pipeline</figcaption>
-        </figure>
+      <section class="text-grid" id="tech" aria-label="Technology used">
+        <div class="text-block">
+          <h2>Tech used</h2>
+          <p><span class="ink">FastAPI</span> for the HTTP API and OpenAPI docs.</p>
+          <p><span class="ink">FFmpeg</span> for trim, overlay, watermark and transcode work.</p>
+          <p><span class="ink">Postgres</span> for videos, variants and job state.</p>
+          <p><span class="ink">SQLAlchemy</span> for database access.</p>
+          <p><span class="ink">Alembic</span> for schema migrations.</p>
+          <p><span class="ink">Docker</span> for the API, database and local services.</p>
+        </div>
 
-        <figure>
-          <div class="showcase squircle">
-            <div class="browser-bar">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="job-list">
-              <div class="job success">
-                <strong>SUCCESS</strong>
-                <span>variant ready</span>
-              </div>
-              <div class="job active">
-                <strong>STARTED</strong>
-                <span>transcoding 720p</span>
-              </div>
-              <div class="job pending">
-                <strong>PENDING</strong>
-                <span>queued overlay</span>
-              </div>
-            </div>
-            <div class="storage-grid">
-              <span>uploads</span>
-              <span>variants</span>
-              <span>processed</span>
-            </div>
-          </div>
-          <figcaption>jobs and storage</figcaption>
-        </figure>
+        <div class="text-block" id="api">
+          <h2>API structure</h2>
+          <p><span class="ink">/videos</span> uploads files and stores video metadata.</p>
+          <p><span class="ink">/trim</span> creates a clipped variant from a time range.</p>
+          <p><span class="ink">/overlays</span> applies text, image, video and watermark overlays.</p>
+          <p><span class="ink">/variants</span> lists processed outputs for a source video.</p>
+          <p><span class="ink">/jobs</span> exposes job status and processing results.</p>
+        </div>
       </section>
 
-      <section class="features" id="capabilities">
-        <h2>What it handles</h2>
+      <section class="features">
+        <h2>How it works</h2>
         <p>
-          The API stores uploaded videos, creates trimmed clips, applies text, image and video
-          overlays, adds full-duration watermarks, and generates processed variants for multiple
-          resolutions.
+          A client uploads a video, requests an operation, then polls a job until the generated
+          variant is ready.
         </p>
         <p>
-          Work is tracked as durable Postgres-backed jobs with statuses for pending, active,
-          successful and failed operations, so client apps can poll progress without owning the
-          processing lifecycle.
+          Stored job states include pending, started, success and failure. Output files are grouped
+          as uploads, variants and processed transcodes.
         </p>
       </section>
     </main>

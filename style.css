@@ -69,6 +69,12 @@ p {
   font-size: 20px;
 }
 
+.tag {
+  max-width: 50vw;
+  margin: 8px 0 2px;
+  font-size: 20px;
+}
+
 .ink {
   color: var(--fg);
 }
@@ -96,6 +102,30 @@ p {
 
 main {
   flex: 1 0 auto;
+}
+
+.text-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 44px;
+  margin: 10px 0 72px;
+}
+
+.text-block {
+  max-width: 28rem;
+}
+
+.text-block p {
+  margin: 10px 0 0;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.inline-link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1.2px;
+  text-underline-offset: 4px;
 }
 
 .api-list {
@@ -150,6 +180,17 @@ main {
 
 .foot a.ink {
   color: var(--fg);
+}
+
+@media (max-width: 760px) {
+  .hero .tag {
+    max-width: 100%;
+  }
+
+  .text-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 }
 
 @media (max-width: 480px) {

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit API - Video Processing Backend</title>
+    <meta
+      name="description"
+      content="A concise showcase for Edit API, a FastAPI backend for upload, trim, overlay, watermark, transcode, and background video jobs."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="container">
+      <div class="hero">
+        <div class="hero-head">
+          <div class="logo squircle" aria-hidden="true">
+            <span>API</span>
+          </div>
+          <h1>Edit API</h1>
+        </div>
+        <p class="tag">
+          Minimal <span class="ink">video processing backend</span> for uploads, trims, overlays,
+          watermarks and transcodes. Built with <span class="ink">FastAPI</span>, FFmpeg,
+          Postgres and background jobs that report progress clearly.
+          <br />
+          Designed as a compact service layer for editor tools and media workflows.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#pipeline">Pipeline</a>
+          <a class="btn ghost" href="#capabilities">Capabilities</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="shots" id="pipeline" aria-label="Project overview">
+        <figure>
+          <div class="showcase squircle">
+            <div class="browser-bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="video-card">
+              <div class="frame">
+                <div class="play"></div>
+                <div class="watermark">wm</div>
+                <div class="caption-line"></div>
+              </div>
+              <div class="timeline">
+                <span class="clip"></span>
+                <span class="clip muted"></span>
+                <span class="clip short"></span>
+              </div>
+            </div>
+            <div class="flow">
+              <span>upload</span>
+              <span>trim</span>
+              <span>overlay</span>
+              <span>export</span>
+            </div>
+          </div>
+          <figcaption>media pipeline</figcaption>
+        </figure>
+
+        <figure>
+          <div class="showcase squircle">
+            <div class="browser-bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="job-list">
+              <div class="job success">
+                <strong>SUCCESS</strong>
+                <span>variant ready</span>
+              </div>
+              <div class="job active">
+                <strong>STARTED</strong>
+                <span>transcoding 720p</span>
+              </div>
+              <div class="job pending">
+                <strong>PENDING</strong>
+                <span>queued overlay</span>
+              </div>
+            </div>
+            <div class="storage-grid">
+              <span>uploads</span>
+              <span>variants</span>
+              <span>processed</span>
+            </div>
+          </div>
+          <figcaption>jobs and storage</figcaption>
+        </figure>
+      </section>
+
+      <section class="features" id="capabilities">
+        <h2>What it handles</h2>
+        <p>
+          The API stores uploaded videos, creates trimmed clips, applies text, image and video
+          overlays, adds full-duration watermarks, and generates processed variants for multiple
+          resolutions.
+        </p>
+        <p>
+          Work is tracked as durable Postgres-backed jobs with statuses for pending, active,
+          successful and failed operations, so client apps can poll progress without owning the
+          processing lifecycle.
+        </p>
+      </section>
+    </main>
+
+    <footer class="container foot">
+      <small>FastAPI / FFmpeg / Postgres / Docker</small>
+    </footer>
+  </body>
+</html>
